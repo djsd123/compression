@@ -1,2 +1,2 @@
 # compression
-CLI compression tool and standalone compression library
+Simple CLI parallel compression tool
