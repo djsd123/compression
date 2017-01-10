@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"sync"
+	"strings"
 )
 
 func main() {
@@ -23,7 +24,7 @@ func main() {
 	fmt.Printf("Compressed %d files\n", i+1)
 }
 
-func compress (filename string) error {
+func compress(filename string) error {
 	in, err := os.Open(filename)
 	if err != nil {
 		return err
@@ -37,6 +38,29 @@ func compress (filename string) error {
 	defer out.Close()
 
 	gzout := gzip.NewWriter(out)
+	_, err = io.Copy(gzout, in)
+	gzout.Close()
+
+	return err
+}
+
+func deCompress(filename string) error {
+	in, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+	defer in.Close()
+
+	out, err := os.Create(strings.TrimSuffix(filename, ".gz"))
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	gzout, err := gzip.NewReader(out)
+	if err != nil {
+		return err
+	}
 	_, err = io.Copy(gzout, in)
 	gzout.Close()
 
